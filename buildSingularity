@@ -5,7 +5,8 @@ Bootstrap: docker
 	exec R
 
 %post
-	cd ~
+	cd /
+	ls
 	#Replace APT mirrors
 	sed -i'' 's/\/archive\.ubuntu\.com/\/au\.archive\.ubuntu\.com/' /etc/apt/sources.list
 	apt-get update
@@ -44,12 +45,13 @@ Bootstrap: docker
 	R -e "install.packages('coda', repos = 'https://cran.ms.unimelb.edu.au/')"
 
 	#Download rjags
-	cd ../..
+	cd /
 	hg clone http://hg.code.sf.net/u/rohan-shah/rjags rjags
 	cd rjags
 	mkdir build
 	cd build
-	cmake -DCMAKE_BUILD_TYPE=Release -DMKL_ROOT_DIR=/opt/intel/compilers_and_libraries_2018.1.163/linux/mkl/ -Djags_DIR=~/jags/build/ -Dbugs_DIR=~/jags/build/ -Dbase_DIR=~/jags/build/ ..	
+	cmake -DCMAKE_BUILD_TYPE=Release -DMKL_ROOT_DIR=/opt/intel/compilers_and_libraries_2018.1.163/linux/mkl/ -Djags_DIR=/jags/build/ -Dbugs_DIR=/jags/build/ -Dbase_DIR=/jags/build/ ..
+	make && make install
 
 	#Fix for stupidity in nloptr, the whole thing is just kind of fucked.
 	apt-get install -y ed
@@ -72,7 +74,7 @@ Bootstrap: docker
 
 	#Install git
 	apt-get install -y git
-	cd ~
+	cd /
 	#Clone and install
 	git clone https://github.com/rohan-shah/magicCalling.git
 	R CMD INSTALL magicCalling
